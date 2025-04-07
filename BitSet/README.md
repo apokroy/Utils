@@ -14,7 +14,7 @@ Record type represents sequence of `Count` bits. Where `Count` is set at creatio
 Supports explicit cast to/from correspoding unsigned integer types (Byte, Word, Cardinal, UInt64).
 
 ### TBitSetX types
-TBitSet8, TBitSet16, TBitSet32, TBitSet64 - set of types similar to TBitSet, but fixed size of 8, 16,32, 64 bit. Is fast as possible types to work with corresponding integer types.
+TBitSet8, TBitSet16, TBitSet32, TBitSet64 - set of types similar to TBitSet, but fixed size of 8, 16,32, 64 bit. Is fast as possible to work with corresponding integer types.
 
 ### TBitSet\<T>
 Represents any value of type `T` as sequence of bits. `T` - must be value type (record, ordinal, real...). Supports explicit cast to/from `T`.

@@ -2,6 +2,7 @@
 The module contains types that allow you to manipulate individual bits in the data.
 
 TBitSet and TBitSetX types is a fixed-size sequence of bits. The sets of bits can be converted to and from strings and integers, supports bitwise AND, OR, XOR and unary NOT operators, allows Test, Set and Unset individual bits, iterate (for .. in) thorough bits.
+All bitset types contains same set of methods similar to C standard library.
 
 All operations, under individual bits, uses zero-based indexing.
 
@@ -19,7 +20,8 @@ Represents any value of type `T` as sequence of bits. `T` - must be value type (
 
 ### Sample
 ```Pascal
-WriteLn(TBitSet8(11).ToString); // Prints 00001011
+WriteLn(TBitSet8(11).ToString);  // Prints 00001011
+WriteLn(TBitSet16(11).ToString); // Prints 0000000000001011
 
 var Bits := TBitSet.Create(1024); // Creates sequence of 1024 bit
 Bits.&Set;                        // Set all 1024 bits

@@ -306,6 +306,7 @@ type
     function  ToString: string;
     property  Bit[const Pos: NativeUInt]: Boolean read GetBit write SetBit; default;
   public
+    class operator Implicit(const Value: TBitSet8): UInt8; static; inline;
     class operator Equal(const L, R: TBitSet8): Boolean; static; inline;
     class operator NotEqual(const L, R: TBitSet8): Boolean; static; inline;
     class operator BitwiseAnd(const L, R: TBitSet8): TBitSet8; static; inline;
@@ -349,6 +350,8 @@ type
     function  ToString: string;
     property  Bit[const Pos: NativeUInt]: Boolean read GetBit write SetBit; default;
   public
+    class operator Implicit(const Value: TBitSet16): UInt16; static; inline;
+    class operator Explicit(const Value: TBitSet16): TBitSet8; static; inline;
     class operator Equal(const L, R: TBitSet16): Boolean; static; inline;
     class operator NotEqual(const L, R: TBitSet16): Boolean; static; inline;
     class operator BitwiseAnd(const L, R: TBitSet16): TBitSet16; static; inline;
@@ -392,6 +395,9 @@ type
     function  ToString: string;
     property  Bit[const Pos: NativeUInt]: Boolean read GetBit write SetBit; default;
   public
+    class operator Implicit(const Value: TBitSet32): UInt32; static; inline;
+    class operator Explicit(const Value: TBitSet32): TBitSet8; static; inline;
+    class operator Explicit(const Value: TBitSet32): TBitSet16; static; inline;
     class operator Equal(const L, R: TBitSet32): Boolean; static; inline;
     class operator NotEqual(const L, R: TBitSet32): Boolean; static; inline;
     class operator BitwiseAnd(const L, R: TBitSet32): TBitSet32; static; inline;
@@ -435,6 +441,10 @@ type
     function  ToString: string;
     property  Bit[const Pos: NativeUInt]: Boolean read GetBit write SetBit; default;
   public
+    class operator Implicit(const Value: TBitSet64): UInt64; static; inline;
+    class operator Explicit(const Value: TBitSet64): TBitSet8; static; inline;
+    class operator Explicit(const Value: TBitSet64): TBitSet16; static; inline;
+    class operator Explicit(const Value: TBitSet64): TBitSet32; static; inline;
     class operator Equal(const L, R: TBitSet64): Boolean; static; inline;
     class operator NotEqual(const L, R: TBitSet64): Boolean; static; inline;
     class operator BitwiseAnd(const L, R: TBitSet64): TBitSet64; static; inline;
@@ -484,13 +494,25 @@ type
     property  Bit[const Pos: NativeUInt]: Boolean read GetBit write SetBit; default;
   public
     class operator Explicit(const Value: T): TBitSet<T>; static; inline;
-    class operator Explicit(const Value: TBitSet<T>): T; static; inline;
+    class operator Implicit(const Value: TBitSet<T>): T; static; inline;
     class operator Equal(const L, R: TBitSet<T>): Boolean; static; inline;
     class operator NotEqual(const L, R: TBitSet<T>): Boolean; static; inline;
     class operator BitwiseAnd(const L, R: TBitSet<T>): TBitSet<T>; static; inline;
     class operator BitwiseOr(const L, R: TBitSet<T>): TBitSet<T>; static; inline;
     class operator BitwiseXor(const L, R: TBitSet<T>): TBitSet<T>; static; inline;
     class operator LogicalNot(const Value: TBitSet<T>): TBitSet<T>; static; inline;
+  end;
+
+  TBitSetHelper = record helper for TBitSet
+  public
+    class function From(const Value: UInt8): TBitSet8; overload; static; inline;
+    class function From(const Value: Int8): TBitSet8; overload; static; inline;
+    class function From(const Value: UInt16): TBitSet16; overload; static; inline;
+    class function From(const Value: Int16): TBitSet16; overload; static; inline;
+    class function From(const Value: UInt32): TBitSet32; overload; static; inline;
+    class function From(const Value: Int32): TBitSet32; overload; static; inline;
+    class function From(const Value: UInt64): TBitSet64; overload; static; inline;
+    class function From(const Value: Int64): TBitSet64; overload; static; inline;
   end;
 
 implementation
@@ -799,17 +821,17 @@ end;
 
 class operator TBitSet.Explicit(const Value: TBitSet): Byte;
 begin
-  Result := Value.FBits[0];
+  Result := Int64Rec(Value.FBits[0]).Bytes[0];
 end;
 
 class operator TBitSet.Explicit(const Value: TBitSet): Word;
 begin
-  Result := Value.FBits[0];
+  Result := Int64Rec(Value.FBits[0]).Words[0];
 end;
 
 class operator TBitSet.Explicit(const Value: TBitSet): UInt32;
 begin
-  Result := Value.FBits[0];
+  Result := Int64Rec(Value.FBits[0]).Lo;
 end;
 
 class operator TBitSet.Explicit(const Value: TBitSet): UInt64;
@@ -929,17 +951,22 @@ begin
   Result := (FBits and BitValue[Pos]) <> 0;
 end;
 
-function TBitSet8.GetEnumerator: IBitSetEnumerator;
-begin
-  Result := TBitSet8Enumerator.Create(Self);
-end;
-
 procedure TBitSet8.SetBit(const Pos: NativeUInt; const Value: Boolean);
 begin
   if Value then
     FBits := FBits or BitValue[Pos]
   else
     FBits := FBits and not BitValue[Pos];
+end;
+
+function TBitSet8.GetEnumerator: IBitSetEnumerator;
+begin
+  Result := TBitSet8Enumerator.Create(Self);
+end;
+
+class operator TBitSet8.Implicit(const Value: TBitSet8): UInt8;
+begin
+  Result := Value.FBits;
 end;
 
 function TBitSet8.All: Boolean;
@@ -1042,17 +1069,27 @@ begin
   Result := (FBits and BitValue[Pos]) <> 0;
 end;
 
-function TBitSet16.GetEnumerator: IBitSetEnumerator;
-begin
-  Result := TBitSet16Enumerator.Create(Self);
-end;
-
 procedure TBitSet16.SetBit(const Pos: NativeUInt; const Value: Boolean);
 begin
   if Value then
     FBits := FBits or BitValue[Pos]
   else
     FBits := FBits and not BitValue[Pos];
+end;
+
+function TBitSet16.GetEnumerator: IBitSetEnumerator;
+begin
+  Result := TBitSet16Enumerator.Create(Self);
+end;
+
+class operator TBitSet16.Implicit(const Value: TBitSet16): UInt16;
+begin
+  Result := Value.FBits;
+end;
+
+class operator TBitSet16.Explicit(const Value: TBitSet16): TBitSet8;
+begin
+  Result.FBits := WordRec(Value).Lo;
 end;
 
 function TBitSet16.All: Boolean;
@@ -1155,17 +1192,32 @@ begin
   Result := (FBits and BitValue[Pos]) <> 0;
 end;
 
-function TBitSet32.GetEnumerator: IBitSetEnumerator;
-begin
-  Result := TBitSet32Enumerator.Create(Self);
-end;
-
 procedure TBitSet32.SetBit(const Pos: NativeUInt; const Value: Boolean);
 begin
   if Value then
     FBits := FBits or BitValue[Pos]
   else
     FBits := FBits and not BitValue[Pos];
+end;
+
+function TBitSet32.GetEnumerator: IBitSetEnumerator;
+begin
+  Result := TBitSet32Enumerator.Create(Self);
+end;
+
+class operator TBitSet32.Implicit(const Value: TBitSet32): UInt32;
+begin
+  Result := Value.FBits;
+end;
+
+class operator TBitSet32.Explicit(const Value: TBitSet32): TBitSet16;
+begin
+  Result.FBits := LongRec(Value).Lo;
+end;
+
+class operator TBitSet32.Explicit(const Value: TBitSet32): TBitSet8;
+begin
+  Result.FBits := LongRec(Value).Bytes[0];
 end;
 
 function TBitSet32.All: Boolean;
@@ -1268,17 +1320,37 @@ begin
   Result := (FBits and BitValue[Pos]) <> 0;
 end;
 
-function TBitSet64.GetEnumerator: IBitSetEnumerator;
-begin
-  Result := TBitSet64Enumerator.Create(Self);
-end;
-
 procedure TBitSet64.SetBit(const Pos: NativeUInt; const Value: Boolean);
 begin
   if Value then
     FBits := FBits or BitValue[Pos]
   else
     FBits := FBits and not BitValue[Pos];
+end;
+
+function TBitSet64.GetEnumerator: IBitSetEnumerator;
+begin
+  Result := TBitSet64Enumerator.Create(Self);
+end;
+
+class operator TBitSet64.Implicit(const Value: TBitSet64): UInt64;
+begin
+  Result := Value.FBits;
+end;
+
+class operator TBitSet64.Explicit(const Value: TBitSet64): TBitSet8;
+begin
+  Result.FBits := Int64Rec(Value).Bytes[0];
+end;
+
+class operator TBitSet64.Explicit(const Value: TBitSet64): TBitSet16;
+begin
+  Result.FBits := Int64Rec(Value).Words[0];
+end;
+
+class operator TBitSet64.Explicit(const Value: TBitSet64): TBitSet32;
+begin
+  Result.FBits := Int64Rec(Value).Lo;
 end;
 
 function TBitSet64.All: Boolean;
@@ -1568,12 +1640,54 @@ begin
   Result := not CompareMem(@L.FBits, @R.FBits, Size);
 end;
 
-class operator TBitSet<T>.Explicit(const Value: TBitSet<T>): T;
+class operator TBitSet<T>.Implicit(const Value: TBitSet<T>): T;
 begin
   Result := Value.FBits;
 end;
 
 class operator TBitSet<T>.Explicit(const Value: T): TBitSet<T>;
+begin
+  Result.FBits := Value;
+end;
+
+{ TBitSetHelper }
+
+class function TBitSetHelper.From(const Value: Int16): TBitSet16;
+begin
+  Result.FBits := UInt16(Value);
+end;
+
+class function TBitSetHelper.From(const Value: UInt16): TBitSet16;
+begin
+  Result.FBits := Value;
+end;
+
+class function TBitSetHelper.From(const Value: Int8): TBitSet8;
+begin
+  Result.FBits := UInt8(Value);
+end;
+
+class function TBitSetHelper.From(const Value: UInt8): TBitSet8;
+begin
+  Result.FBits := Value;
+end;
+
+class function TBitSetHelper.From(const Value: Int64): TBitSet64;
+begin
+  Result.FBits := UInt64(Value);
+end;
+
+class function TBitSetHelper.From(const Value: UInt64): TBitSet64;
+begin
+  Result.FBits := Value;
+end;
+
+class function TBitSetHelper.From(const Value: Int32): TBitSet32;
+begin
+  Result.FBits := UInt32(Value);
+end;
+
+class function TBitSetHelper.From(const Value: UInt32): TBitSet32;
 begin
   Result.FBits := Value;
 end;

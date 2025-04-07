@@ -21,12 +21,15 @@ Represents any value of type `T` as sequence of bits. `T` - must be value type (
 
 ### Sample
 ```Pascal
-WriteLn(TBitSet8(11).ToString);  // Prints 00001011
-WriteLn(TBitSet16(11).ToString); // Prints 0000000000001011
+WriteLn(TBitSet8.Create(11).ToString);  // Prints 00001011
+WriteLn(TBitSet16.Create(11).ToString); // Prints 0000000000001011
 
 var Bits := TBitSet.Create(1024); // Creates sequence of 1024 bit
 Bits.&Set;                        // Set all 1024 bits
 Bits[5] := False;                 // Unset 5th bit (zero based)
 WriteLn(Bits.ToString);           // Prints 1024 symbols ends with: ...11011111 
 
+for var Bit in Bits do
+  if Bit.IsSet then
+    WriteLn(Bit.Position);
 

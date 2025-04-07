@@ -291,6 +291,7 @@ type
     function  GetBit(const Pos: NativeUInt): Boolean; inline;
     procedure SetBit(const Pos: NativeUInt; const Value: Boolean); inline;
   public
+    constructor Create(Value: UInt8);
     function  GetEnumerator: IBitSetEnumerator;
   public
     function  All: Boolean;
@@ -333,6 +334,7 @@ type
     function  GetBit(const Pos: NativeUInt): Boolean; inline;
     procedure SetBit(const Pos: NativeUInt; const Value: Boolean); inline;
   public
+    constructor Create(Value: UInt16);
     function  GetEnumerator: IBitSetEnumerator;
   public
     function  All: Boolean;
@@ -375,6 +377,7 @@ type
     function  GetBit(const Pos: NativeUInt): Boolean; inline;
     procedure SetBit(const Pos: NativeUInt; const Value: Boolean); inline;
   public
+    constructor Create(Value: UInt32);
     function  GetEnumerator: IBitSetEnumerator;
   public
     function  All: Boolean;
@@ -417,6 +420,7 @@ type
     function  GetBit(const Pos: NativeUInt): Boolean; inline;
     procedure SetBit(const Pos: NativeUInt; const Value: Boolean); inline;
   public
+    constructor Create(Value: UInt64);
     function  GetEnumerator: IBitSetEnumerator;
   public
     function  All: Boolean;
@@ -915,6 +919,11 @@ end;
 
 { TBitSet8 }
 
+constructor TBitSet8.Create(Value: UInt8);
+begin
+  FBits := Value;
+end;
+
 function TBitSet8.GetBit(const Pos: NativeUInt): Boolean;
 begin
   Result := (FBits and BitValue[Pos]) <> 0;
@@ -1022,6 +1031,11 @@ begin
 end;
 
 { TBitSet16 }
+
+constructor TBitSet16.Create(Value: UInt16);
+begin
+  FBits := Value;
+end;
 
 function TBitSet16.GetBit(const Pos: NativeUInt): Boolean;
 begin
@@ -1131,6 +1145,11 @@ end;
 
 { TBitSet32 }
 
+constructor TBitSet32.Create(Value: UInt32);
+begin
+  FBits := Value;
+end;
+
 function TBitSet32.GetBit(const Pos: NativeUInt): Boolean;
 begin
   Result := (FBits and BitValue[Pos]) <> 0;
@@ -1238,6 +1257,11 @@ begin
 end;
 
 { TBitSet64 }
+
+constructor TBitSet64.Create(Value: UInt64);
+begin
+  FBits := Value;
+end;
 
 function TBitSet64.GetBit(const Pos: NativeUInt): Boolean;
 begin

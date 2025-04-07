@@ -151,6 +151,9 @@ const
   {$endregion}
 
 type
+  PUInt8  = ^UInt8;
+  PUInt16 = ^UInt16;
+
   TBitInSet = record
     Position: NativeUInt;
     IsSet: Boolean;
@@ -302,8 +305,6 @@ type
     function  ToString: string;
     property  Bit[const Pos: NativeUInt]: Boolean read GetBit write SetBit; default;
   public
-    class operator Explicit(const Value: Byte): TBitSet8; static; inline;
-    class operator Explicit(const Value: TBitSet8): Byte; static; inline;
     class operator Equal(const L, R: TBitSet8): Boolean; static; inline;
     class operator NotEqual(const L, R: TBitSet8): Boolean; static; inline;
     class operator BitwiseAnd(const L, R: TBitSet8): TBitSet8; static; inline;
@@ -346,10 +347,6 @@ type
     function  ToString: string;
     property  Bit[const Pos: NativeUInt]: Boolean read GetBit write SetBit; default;
   public
-    class operator Explicit(const Value: Byte): TBitSet16; static; inline;
-    class operator Explicit(const Value: Word): TBitSet16; static; inline;
-    class operator Explicit(const Value: TBitSet16): Byte; static; inline;
-    class operator Explicit(const Value: TBitSet16): Word; static; inline;
     class operator Equal(const L, R: TBitSet16): Boolean; static; inline;
     class operator NotEqual(const L, R: TBitSet16): Boolean; static; inline;
     class operator BitwiseAnd(const L, R: TBitSet16): TBitSet16; static; inline;
@@ -392,12 +389,6 @@ type
     function  ToString: string;
     property  Bit[const Pos: NativeUInt]: Boolean read GetBit write SetBit; default;
   public
-    class operator Explicit(const Value: Byte): TBitSet32; static; inline;
-    class operator Explicit(const Value: Word): TBitSet32; static; inline;
-    class operator Explicit(const Value: UInt32): TBitSet32; static; inline;
-    class operator Explicit(const Value: TBitSet32): Byte; static; inline;
-    class operator Explicit(const Value: TBitSet32): Word; static; inline;
-    class operator Explicit(const Value: TBitSet32): UInt32; static; inline;
     class operator Equal(const L, R: TBitSet32): Boolean; static; inline;
     class operator NotEqual(const L, R: TBitSet32): Boolean; static; inline;
     class operator BitwiseAnd(const L, R: TBitSet32): TBitSet32; static; inline;
@@ -440,14 +431,6 @@ type
     function  ToString: string;
     property  Bit[const Pos: NativeUInt]: Boolean read GetBit write SetBit; default;
   public
-    class operator Explicit(const Value: Byte): TBitSet64; static; inline;
-    class operator Explicit(const Value: Word): TBitSet64; static; inline;
-    class operator Explicit(const Value: UInt32): TBitSet64; static; inline;
-    class operator Explicit(const Value: UInt64): TBitSet64; static; inline;
-    class operator Explicit(const Value: TBitSet64): Byte; static; inline;
-    class operator Explicit(const Value: TBitSet64): Word; static; inline;
-    class operator Explicit(const Value: TBitSet64): UInt32; static; inline;
-    class operator Explicit(const Value: TBitSet64): UInt64; static; inline;
     class operator Equal(const L, R: TBitSet64): Boolean; static; inline;
     class operator NotEqual(const L, R: TBitSet64): Boolean; static; inline;
     class operator BitwiseAnd(const L, R: TBitSet64): TBitSet64; static; inline;
@@ -1008,16 +991,6 @@ begin
     Result[8 - I] := cBit[Bit[I]];
 end;
 
-class operator TBitSet8.Explicit(const Value: Byte): TBitSet8;
-begin
-  Result.FBits := Value;
-end;
-
-class operator TBitSet8.Explicit(const Value: TBitSet8): Byte;
-begin
-  Result := Value.FBits;
-end;
-
 class operator TBitSet8.BitwiseAnd(const L, R: TBitSet8): TBitSet8;
 begin
   Result.FBits := L.FBits and R.FBits;
@@ -1124,26 +1097,6 @@ begin
   SetLength(Result, 16);
   for var I := 0 to 15 do
     Result[16 - I] := cBit[Bit[I]];
-end;
-
-class operator TBitSet16.Explicit(const Value: Byte): TBitSet16;
-begin
-  Result.FBits := Value;
-end;
-
-class operator TBitSet16.Explicit(const Value: Word): TBitSet16;
-begin
-  Result.FBits := Value;
-end;
-
-class operator TBitSet16.Explicit(const Value: TBitSet16): Byte;
-begin
-  Result := WordRec(Value.FBits).Lo;
-end;
-
-class operator TBitSet16.Explicit(const Value: TBitSet16): Word;
-begin
-  Result := Value.FBits;
 end;
 
 class operator TBitSet16.BitwiseAnd(const L, R: TBitSet16): TBitSet16;
@@ -1254,36 +1207,6 @@ begin
     Result[32 - I] := cBit[Bit[I]];
 end;
 
-class operator TBitSet32.Explicit(const Value: Byte): TBitSet32;
-begin
-  Result.FBits := Value;
-end;
-
-class operator TBitSet32.Explicit(const Value: Word): TBitSet32;
-begin
-  Result.FBits := Value;
-end;
-
-class operator TBitSet32.Explicit(const Value: UInt32): TBitSet32;
-begin
-  Result.FBits := Value;
-end;
-
-class operator TBitSet32.Explicit(const Value: TBitSet32): Byte;
-begin
-  Result := LongRec(Value.FBits).Bytes[0];
-end;
-
-class operator TBitSet32.Explicit(const Value: TBitSet32): Word;
-begin
-  Result := LongRec(Value.FBits).Lo;
-end;
-
-class operator TBitSet32.Explicit(const Value: TBitSet32): UInt32;
-begin
-  Result := Value.FBits;
-end;
-
 class operator TBitSet32.BitwiseAnd(const L, R: TBitSet32): TBitSet32;
 begin
   Result.FBits := L.FBits and R.FBits;
@@ -1392,46 +1315,6 @@ begin
     Result[64 - I] := cBit[Bit[I]];
 end;
 
-class operator TBitSet64.Explicit(const Value: Byte): TBitSet64;
-begin
-  Result.FBits := Value;
-end;
-
-class operator TBitSet64.Explicit(const Value: Word): TBitSet64;
-begin
-  Result.FBits := Value;
-end;
-
-class operator TBitSet64.Explicit(const Value: UInt32): TBitSet64;
-begin
-  Result.FBits := Value;
-end;
-
-class operator TBitSet64.Explicit(const Value: UInt64): TBitSet64;
-begin
-  Result.FBits := Value;
-end;
-
-class operator TBitSet64.Explicit(const Value: TBitSet64): Byte;
-begin
-  Result := Int64Rec(Value.FBits).Bytes[0];
-end;
-
-class operator TBitSet64.Explicit(const Value: TBitSet64): Word;
-begin
-  Result := Int64Rec(Value.FBits).Words[0];
-end;
-
-class operator TBitSet64.Explicit(const Value: TBitSet64): UInt32;
-begin
-  Result := Int64Rec(Value.FBits).Lo;
-end;
-
-class operator TBitSet64.Explicit(const Value: TBitSet64): UInt64;
-begin
-  Result := Value.FBits;
-end;
-
 class operator TBitSet64.BitwiseAnd(const L, R: TBitSet64): TBitSet64;
 begin
   Result.FBits := L.FBits and R.FBits;
@@ -1467,8 +1350,8 @@ end;
 function TBitSet<T>.GetBit(const Pos: NativeUInt): Boolean;
 begin
   case Size of
-    1: Result := TBitSet8(PByte(@FBits)^)[Pos];
-    2: Result := TBitSet16(PWord(@FBits)^)[Pos];
+    1: Result := TBitSet8(PUInt8(@FBits)^)[Pos];
+    2: Result := TBitSet16(PUInt16(@FBits)^)[Pos];
     4: Result := TBitSet32(PUInt32(@FBits)^)[Pos];
     8: Result := TBitSet64(PUInt64(@FBits)^)[Pos];
   else Result := TBitSet.Create(@FBits, Count)[Pos];
@@ -1478,8 +1361,8 @@ end;
 function TBitSet<T>.GetEnumerator: IBitSetEnumerator;
 begin
   case Size of
-    1: Result := TBitSet8(PByte(@FBits)^).GetEnumerator;
-    2: Result := TBitSet16(PWord(@FBits)^).GetEnumerator;
+    1: Result := TBitSet8(PUInt8(@FBits)^).GetEnumerator;
+    2: Result := TBitSet16(PUInt16(@FBits)^).GetEnumerator;
     4: Result := TBitSet32(PUInt32(@FBits)^).GetEnumerator;
     8: Result := TBitSet64(PUInt64(@FBits)^).GetEnumerator;
   else Result := TBitSet.Create(@FBits, Count).GetEnumerator;
@@ -1489,8 +1372,8 @@ end;
 procedure TBitSet<T>.SetBit(const Pos: NativeUInt; const Value: Boolean);
 begin
   case Size of
-    1: TBitSet8(PByte(@FBits)^)[Pos] := Value;
-    2: TBitSet16(PWord(@FBits)^)[Pos] := Value;
+    1: TBitSet8(PUInt8(@FBits)^)[Pos] := Value;
+    2: TBitSet16(PUInt16(@FBits)^)[Pos] := Value;
     4: TBitSet32(PUInt32(@FBits)^)[Pos] := Value;
     8: TBitSet64(PUInt64(@FBits)^)[Pos] := Value;
   else TBitSet.Create(@FBits, Count)[Pos] := Value;
@@ -1500,8 +1383,8 @@ end;
 function TBitSet<T>.All: Boolean;
 begin
   case Size of
-    1: Result := TBitSet8(PByte(@FBits)^).All;
-    2: Result := TBitSet16(PWord(@FBits)^).All;
+    1: Result := TBitSet8(PUInt8(@FBits)^).All;
+    2: Result := TBitSet16(PUInt16(@FBits)^).All;
     4: Result := TBitSet32(PUInt32(@FBits)^).All;
     8: Result := TBitSet64(PUInt64(@FBits)^).All;
   else Result := TBitSet.Create(@FBits, Count).All;
@@ -1511,8 +1394,8 @@ end;
 function TBitSet<T>.Any: Boolean;
 begin
   case Size of
-    1: Result := TBitSet8(PByte(@FBits)^).Any;
-    2: Result := TBitSet16(PWord(@FBits)^).Any;
+    1: Result := TBitSet8(PUInt8(@FBits)^).Any;
+    2: Result := TBitSet16(PUInt16(@FBits)^).Any;
     4: Result := TBitSet32(PUInt32(@FBits)^).Any;
     8: Result := TBitSet64(PUInt64(@FBits)^).Any;
   else Result := TBitSet.Create(@FBits, Count).Any;
@@ -1522,8 +1405,8 @@ end;
 function TBitSet<T>.Flip: TBitSet<T>;
 begin
   case Size of
-    1: PByte(@Result.FBits)^ := TBitSet8(PByte(@FBits)^).Flip.FBits;
-    2: PWord(@Result.FBits)^ := TBitSet16(PWord(@FBits)^).Flip.FBits;
+    1: PUInt8(@Result.FBits)^ := TBitSet8(PUInt8(@FBits)^).Flip.FBits;
+    2: PUInt16(@Result.FBits)^ := TBitSet16(PUInt16(@FBits)^).Flip.FBits;
     4: PUInt32(@Result.FBits)^ := TBitSet32(PUInt32(@FBits)^).Flip.FBits;
     8: PUInt64(@Result.FBits)^ := TBitSet64(PUInt64(@FBits)^).Flip.FBits;
   else Move(TBitSet.Create(@FBits, Count).Flip.FBits[0], Result.FBits, Size);
@@ -1533,8 +1416,8 @@ end;
 function TBitSet<T>.Flip(const Pos: NativeUInt): TBitSet<T>;
 begin
   case Size of
-    1: PByte(@Result.FBits)^ := TBitSet8(PByte(@FBits)^).Flip(Pos).FBits;
-    2: PWord(@Result.FBits)^ := TBitSet16(PWord(@FBits)^).Flip(Pos).FBits;
+    1: PUInt8(@Result.FBits)^ := TBitSet8(PUInt8(@FBits)^).Flip(Pos).FBits;
+    2: PUInt16(@Result.FBits)^ := TBitSet16(PUInt16(@FBits)^).Flip(Pos).FBits;
     4: PUInt32(@Result.FBits)^ := TBitSet32(PUInt32(@FBits)^).Flip(Pos).FBits;
     8: PUInt64(@Result.FBits)^ := TBitSet64(PUInt64(@FBits)^).Flip(Pos).FBits;
   else Move(TBitSet.Create(@FBits, Count).Flip(Pos).FBits[0], Result.FBits, Size);
@@ -1544,8 +1427,8 @@ end;
 function TBitSet<T>.None: Boolean;
 begin
   case Size of
-    1: Result := TBitSet8(PByte(@FBits)^).None;
-    2: Result := TBitSet16(PWord(@FBits)^).None;
+    1: Result := TBitSet8(PUInt8(@FBits)^).None;
+    2: Result := TBitSet16(PUInt16(@FBits)^).None;
     4: Result := TBitSet32(PUInt32(@FBits)^).None;
     8: Result := TBitSet64(PUInt64(@FBits)^).None;
   else Result := TBitSet.Create(@FBits, Count).None;
@@ -1555,8 +1438,8 @@ end;
 function TBitSet<T>.Reset: TBitSet<T>;
 begin
   case Size of
-    1: PByte(@Result.FBits)^ := TBitSet8(PByte(@FBits)^).Reset.FBits;
-    2: PWord(@Result.FBits)^ := TBitSet16(PWord(@FBits)^).Reset.FBits;
+    1: PUInt8(@Result.FBits)^ := TBitSet8(PUInt8(@FBits)^).Reset.FBits;
+    2: PUInt16(@Result.FBits)^ := TBitSet16(PUInt16(@FBits)^).Reset.FBits;
     4: PUInt32(@Result.FBits)^ := TBitSet32(PUInt32(@FBits)^).Reset.FBits;
     8: PUInt64(@Result.FBits)^ := TBitSet64(PUInt64(@FBits)^).Reset.FBits;
   else Move(TBitSet.Create(@FBits, Count).Reset.FBits[0], Result.FBits, Size);
@@ -1566,8 +1449,8 @@ end;
 function TBitSet<T>.Reset(const Pos: NativeUInt): TBitSet<T>;
 begin
   case Size of
-    1: PByte(@Result.FBits)^ := TBitSet8(PByte(@FBits)^).Reset(Pos).FBits;
-    2: PWord(@Result.FBits)^ := TBitSet16(PWord(@FBits)^).Reset(Pos).FBits;
+    1: PUInt8(@Result.FBits)^ := TBitSet8(PUInt8(@FBits)^).Reset(Pos).FBits;
+    2: PUInt16(@Result.FBits)^ := TBitSet16(PUInt16(@FBits)^).Reset(Pos).FBits;
     4: PUInt32(@Result.FBits)^ := TBitSet32(PUInt32(@FBits)^).Reset(Pos).FBits;
     8: PUInt64(@Result.FBits)^ := TBitSet64(PUInt64(@FBits)^).Reset(Pos).FBits;
   else Move(TBitSet.Create(@FBits, Count).Reset(Pos).FBits[0], Result.FBits, Size);
@@ -1577,8 +1460,8 @@ end;
 function TBitSet<T>.&Set(const Pos: NativeUInt): TBitSet<T>;
 begin
   case Size of
-    1: PByte(@Result.FBits)^ := TBitSet8(PByte(@FBits)^).&Set(Pos).FBits;
-    2: PWord(@Result.FBits)^ := TBitSet16(PWord(@FBits)^).&Set(Pos).FBits;
+    1: PUInt8(@Result.FBits)^ := TBitSet8(PUInt8(@FBits)^).&Set(Pos).FBits;
+    2: PUInt16(@Result.FBits)^ := TBitSet16(PUInt16(@FBits)^).&Set(Pos).FBits;
     4: PUInt32(@Result.FBits)^ := TBitSet32(PUInt32(@FBits)^).&Set(Pos).FBits;
     8: PUInt64(@Result.FBits)^ := TBitSet64(PUInt64(@FBits)^).&Set(Pos).FBits;
   else Move(TBitSet.Create(@FBits, Count).&Set(Pos).FBits[0], Result.FBits, Size);
@@ -1588,8 +1471,8 @@ end;
 function TBitSet<T>.&Set: TBitSet<T>;
 begin
   case Size of
-    1: PByte(@Result.FBits)^ := TBitSet8(PByte(@FBits)^).&Set.FBits;
-    2: PWord(@Result.FBits)^ := TBitSet16(PWord(@FBits)^).&Set.FBits;
+    1: PUInt8(@Result.FBits)^ := TBitSet8(PUInt8(@FBits)^).&Set.FBits;
+    2: PUInt16(@Result.FBits)^ := TBitSet16(PUInt16(@FBits)^).&Set.FBits;
     4: PUInt32(@Result.FBits)^ := TBitSet32(PUInt32(@FBits)^).&Set.FBits;
     8: PUInt64(@Result.FBits)^ := TBitSet64(PUInt64(@FBits)^).&Set.FBits;
   else Move(TBitSet.Create(@FBits, Count).&Set.FBits[0], Result.FBits, Size);
@@ -1599,8 +1482,8 @@ end;
 function TBitSet<T>.ToString: string;
 begin
   case Size of
-    1: Result := TBitSet8(PByte(@FBits)^).ToString;
-    2: Result := TBitSet16(PWord(@FBits)^).ToString;
+    1: Result := TBitSet8(PUInt8(@FBits)^).ToString;
+    2: Result := TBitSet16(PUInt16(@FBits)^).ToString;
     4: Result := TBitSet32(PUInt32(@FBits)^).ToString;
     8: Result := TBitSet64(PUInt64(@FBits)^).ToString;
   else Result := TBitSet.Create(@FBits, Count).ToString;
@@ -1610,10 +1493,10 @@ end;
 class operator TBitSet<T>.BitwiseAnd(const L, R: TBitSet<T>): TBitSet<T>;
 begin
   case Size of
-    1: PByte(@Result.FBits)^ := (TBitSet8(PByte(@L.FBits)^)  and TBitSet8(PByte(@R.FBits)^)).FBits;
-    2: PWord(@Result.FBits)^ := (TBitSet16(PByte(@L.FBits)^) and TBitSet16(PByte(@R.FBits)^)).FBits;
-    4: PUInt32(@Result.FBits)^ := (TBitSet32(PByte(@L.FBits)^) and TBitSet32(PByte(@R.FBits)^)).FBits;
-    8: PUInt64(@Result.FBits)^ := (TBitSet64(PByte(@L.FBits)^) and TBitSet64(PByte(@R.FBits)^)).FBits;
+    1: PUInt8(@Result.FBits)^   := TBitSet8(PUInt8(@L.FBits)^).FBits and TBitSet8(PUInt8(@R.FBits)^).FBits;
+    2: PUInt16(@Result.FBits)^   := TBitSet16(PUInt16(@L.FBits)^).FBits and TBitSet16(PUInt16(@R.FBits)^).FBits;
+    4: PUInt32(@Result.FBits)^ := TBitSet32(PUInt32(@L.FBits)^).FBits and TBitSet32(PUInt32(@R.FBits)^).FBits;
+    8: PUInt64(@Result.FBits)^ := TBitSet64(PUInt64(@L.FBits)^).FBits and TBitSet64(PUInt64(@R.FBits)^).FBits;
   else Move((TBitSet.Create(@L.FBits, Count) and TBitSet.Create(@R.FBits, Count)).FBits[0], Result.FBits, Size);
   end;
 end;
@@ -1621,10 +1504,10 @@ end;
 class operator TBitSet<T>.BitwiseOr(const L, R: TBitSet<T>): TBitSet<T>;
 begin
   case Size of
-    1: PByte(@Result.FBits)^ := (TBitSet8(PByte(@L.FBits)^)  or TBitSet8(PByte(@R.FBits)^)).FBits;
-    2: PWord(@Result.FBits)^ := (TBitSet16(PByte(@L.FBits)^) or TBitSet16(PByte(@R.FBits)^)).FBits;
-    4: PUInt32(@Result.FBits)^ := (TBitSet32(PByte(@L.FBits)^) or TBitSet32(PByte(@R.FBits)^)).FBits;
-    8: PUInt64(@Result.FBits)^ := (TBitSet64(PByte(@L.FBits)^) or TBitSet64(PByte(@R.FBits)^)).FBits;
+    1: PUInt8(@Result.FBits)^   := TBitSet8(PUInt8(@L.FBits)^).FBits or TBitSet8(PUInt8(@R.FBits)^).FBits;
+    2: PUInt16(@Result.FBits)^   := TBitSet16(PUInt16(@L.FBits)^).FBits or TBitSet16(PUInt16(@R.FBits)^).FBits;
+    4: PUInt32(@Result.FBits)^ := TBitSet32(PUInt32(@L.FBits)^).FBits or TBitSet32(PUInt32(@R.FBits)^).FBits;
+    8: PUInt64(@Result.FBits)^ := TBitSet64(PUInt64(@L.FBits)^).FBits or TBitSet64(PUInt64(@R.FBits)^).FBits;
   else Move((TBitSet.Create(@L.FBits, Count) or TBitSet.Create(@R.FBits, Count)).FBits[0], Result.FBits, Size);
   end;
 end;
@@ -1632,10 +1515,10 @@ end;
 class operator TBitSet<T>.BitwiseXor(const L, R: TBitSet<T>): TBitSet<T>;
 begin
   case Size of
-    1: PByte(@Result.FBits)^ := (TBitSet8(PByte(@L.FBits)^)  xor TBitSet8(PByte(@R.FBits)^)).FBits;
-    2: PWord(@Result.FBits)^ := (TBitSet16(PByte(@L.FBits)^) xor TBitSet16(PByte(@R.FBits)^)).FBits;
-    4: PUInt32(@Result.FBits)^ := (TBitSet32(PByte(@L.FBits)^) xor TBitSet32(PByte(@R.FBits)^)).FBits;
-    8: PUInt64(@Result.FBits)^ := (TBitSet64(PByte(@L.FBits)^) xor TBitSet64(PByte(@R.FBits)^)).FBits;
+    1: PUInt8(@Result.FBits)^   := TBitSet8(PUInt8(@L.FBits)^).FBits xor TBitSet8(PUInt8(@R.FBits)^).FBits;
+    2: PUInt16(@Result.FBits)^   := TBitSet16(PUInt16(@L.FBits)^).FBits xor TBitSet16(PUInt16(@R.FBits)^).FBits;
+    4: PUInt32(@Result.FBits)^ := TBitSet32(PUInt32(@L.FBits)^).FBits xor TBitSet32(PUInt32(@R.FBits)^).FBits;
+    8: PUInt64(@Result.FBits)^ := TBitSet64(PUInt64(@L.FBits)^).FBits xor TBitSet64(PUInt64(@R.FBits)^).FBits;
   else Move((TBitSet.Create(@L.FBits, Count) xor TBitSet.Create(@R.FBits, Count)).FBits[0], Result.FBits, Size);
   end;
 end;
@@ -1643,10 +1526,10 @@ end;
 class operator TBitSet<T>.LogicalNot(const Value: TBitSet<T>): TBitSet<T>;
 begin
   case Size of
-    1: PByte(@Result.FBits)^ := (not TBitSet8(PByte(@Value.FBits)^)).FBits;
-    2: PWord(@Result.FBits)^ := (not TBitSet16(PByte(@Value.FBits)^)).FBits;
-    4: PUInt32(@Result.FBits)^ := (not TBitSet32(PByte(@Value.FBits)^)).FBits;
-    8: PUInt64(@Result.FBits)^ := (not TBitSet64(PByte(@Value.FBits)^)).FBits;
+    1: PUInt8(@Result.FBits)^   := not TBitSet8(PUInt8(@Value.FBits)^).FBits;
+    2: PUInt16(@Result.FBits)^   := not TBitSet16(PUInt16(@Value.FBits)^).FBits;
+    4: PUInt32(@Result.FBits)^ := not TBitSet32(PUInt32(@Value.FBits)^).FBits;
+    8: PUInt64(@Result.FBits)^ := not TBitSet64(PUInt64(@Value.FBits)^).FBits;
   else Move((not TBitSet.Create(@Value.FBits, Count)).FBits[0], Result.FBits, Size);
   end;
 end;

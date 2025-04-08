@@ -188,14 +188,14 @@ type
     constructor Create(Data: Pointer; Count: NativeUInt); overload;
     function  GetEnumerator: IBitSetEnumerator;
     ///  <summary>
-    ///  Load biteset from memory, size of referenced data must be equal to Size
+    ///  Load bitset from memory, size of referenced data must be equal to Size
     ///  </summary>
     ///  <remark>
     ///  Be carefull - no memory check provided
     ///  </remark>
     procedure Load(Data: Pointer);
     ///  <summary>
-    ///  Save biteset to memory, size of buffer must be equal or greater then Size
+    ///  Save bitset to memory, size of buffer must be equal or greater then Size
     ///  </summary>
     ///  <remark>
     ///  Be carefull - no memory check provided
@@ -493,7 +493,6 @@ type
     function  ToString: string;
     property  Bit[const Pos: NativeUInt]: Boolean read GetBit write SetBit; default;
   public
-    class operator Explicit(const Value: T): TBitSet<T>; static; inline;
     class operator Implicit(const Value: TBitSet<T>): T; static; inline;
     class operator Equal(const L, R: TBitSet<T>): Boolean; static; inline;
     class operator NotEqual(const L, R: TBitSet<T>): Boolean; static; inline;
@@ -670,7 +669,7 @@ constructor TBitSet.Create(Count: NativeUInt);
 begin
   FCount := Count;
   FLength := (Count + 63) shr 6;
-  FSize := FLength shl 3;
+  FSize := (Count + 7) shr 3;
   SetLength(FBits, FLength);
 end;
 
@@ -701,13 +700,19 @@ end;
 
 procedure TBitSet.Load(Data: Pointer);
 begin
-  Move(Data^, Pointer(FBits)^, FSize);
-  FBits[FLength - 1] := FBits[FLength - 1] and SignificantBitMask[(Count - 1) and 63];
+  if Count > 0 then
+  begin
+    FBits[FLength - 1] := 0;
+    Move(Data^, Pointer(FBits)^, FSize);
+  end;
 end;
 
 procedure TBitSet.Save(Data: Pointer);
 begin
-  Move(Pointer(FBits)^, Data^, FSize);
+  if Count > 0 then
+  begin
+    Move(Pointer(FBits)^, Data^, FSize);
+  end;
 end;
 
 function TBitSet.All: Boolean;
@@ -1643,11 +1648,6 @@ end;
 class operator TBitSet<T>.Implicit(const Value: TBitSet<T>): T;
 begin
   Result := Value.FBits;
-end;
-
-class operator TBitSet<T>.Explicit(const Value: T): TBitSet<T>;
-begin
-  Result.FBits := Value;
 end;
 
 { TBitSetHelper }

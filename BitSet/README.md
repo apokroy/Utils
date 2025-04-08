@@ -103,9 +103,8 @@ A string where each bit set has a corresponding character of 1, and 0 if the bit
 
 ### Operators
 - Equal
-- NotEqual
-- BitwiseAnd
-- BitwiseOr
-- BitwiseXor
-    class operator LogicalNot(const Value: TBitSet): TBitSet; static; inline;
-  end;
+- Not Equal
+- Bitwise And
+- Bitwise Or
+- Bitwise Xor
+- Not

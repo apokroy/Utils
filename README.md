@@ -1,7 +1,7 @@
 # Utils
 Assorted set of utility code
 
-### ![BitSet](./BitSet)
+### ![BitSets](./BitSet)
 TBitSet types, to reperesent data as sequence of bits
 ### ![UnitsStr](./UnitsStr)
 Convert units of measurement to string and vice versa
